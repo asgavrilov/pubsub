@@ -1,6 +1,5 @@
-package broker;
+package consumer;
 
-import consumer.IConsumerCallback;
 import pojo.Message;
 
 import java.util.concurrent.Executor;
@@ -16,8 +15,6 @@ public class ConsumerQueue{
 
 
     public void send(Message message) {
-        consumerExecutor.execute(() -> {
-            this.callback.run(message);
-        });
+        consumerExecutor.execute(() -> this.callback.run(message));
     }
 }
