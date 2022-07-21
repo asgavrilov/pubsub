@@ -3,47 +3,32 @@ package broker;
 import consumer.IConsumerCallback;
 import pojo.Message;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class MessageBroker implements IMessageBroker {
-    private final BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>(10);
-    private final Map<String, Set<IConsumerCallback>> consumersTopicMap = new HashMap<>();
-
-    public void addMessageToQueue(Message message) {
-        messageQueue.add(message);
-    }
-
-    public void removeMessageFromQueue() throws InterruptedException {
-        messageQueue.take();
-    }
+    private final Executor executor = Executors.newCachedThreadPool();
+    private final ConcurrentHashMap<String, List<ConsumerQueue>> consumersTopicMap = new ConcurrentHashMap<>();
 
 
     @Override
     public void register(String topic, IConsumerCallback consumer) {
-        Set<IConsumerCallback> consumers;
+        ConsumerQueue consumerQueue = new ConsumerQueue(consumer);
+        executor.execute(consumerQueue);
         if (consumersTopicMap.containsKey(topic)) {
-            consumers = consumersTopicMap.get(topic);
+            consumersTopicMap.get(topic).add(consumerQueue);
         } else {
-            consumers = new HashSet<>();
+            ArrayList<ConsumerQueue> list = new ArrayList<>();
+            list.add(consumerQueue);
+            consumersTopicMap.put(topic, list);
         }
-        consumers.add(consumer);
-        consumersTopicMap.put(topic, consumers);
-
     }
 
     @Override
-    public void send(Message message) throws InterruptedException {
-        addMessageToQueue(message);
-        String topic = message.getTopic();
-        Set<IConsumerCallback> consumersByTopic = consumersTopicMap.get(topic);
-        for (IConsumerCallback consumer : consumersByTopic) {
-            consumer.run(message);
-        }
-        removeMessageFromQueue();
+    public void send(Message message) {
+        consumersTopicMap.getOrDefault(message.topic, List.of()).
+                forEach(consumerQueue -> consumerQueue.send(message));
     }
 }
