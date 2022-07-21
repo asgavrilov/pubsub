@@ -13,9 +13,4 @@ public class ConsumerCallbackImpl3 implements IConsumerCallback {
         }
         System.out.println("Callback3 " + message.content);
     }
-
-    @Override
-    public void run() {
-
-    }
 }
