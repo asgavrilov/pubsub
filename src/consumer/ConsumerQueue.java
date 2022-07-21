@@ -1,4 +1,4 @@
-package broker;
+package consumer;
 
 import consumer.IConsumerCallback;
 import pojo.Message;

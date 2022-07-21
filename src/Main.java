@@ -6,7 +6,7 @@ import pojo.Message;
 
 public class Main {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         MessageBroker broker = new MessageBroker();
         broker.register("A", new ConsumerCallbackImpl1());
         broker.register("A", new ConsumerCallbackImpl2());
