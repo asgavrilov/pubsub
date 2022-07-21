@@ -14,6 +14,7 @@ public class ConsumerQueue{
         this.callback = callback;
     }
 
+
     public void send(Message message) {
         consumerExecutor.execute(() -> {
             this.callback.run(message);
