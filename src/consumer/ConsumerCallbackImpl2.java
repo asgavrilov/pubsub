@@ -13,4 +13,9 @@ public class ConsumerCallbackImpl2 implements IConsumerCallback {
         }
         System.out.println("Callback2 " + message.content);
     }
+
+    @Override
+    public void run() {
+
+    }
 }
