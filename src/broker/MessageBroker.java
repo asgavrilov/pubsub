@@ -1,5 +1,6 @@
 package broker;
 
+import consumer.ConsumerQueue;
 import consumer.IConsumerCallback;
 import pojo.Message;
 
