@@ -2,6 +2,6 @@ package consumer;
 
 import pojo.Message;
 
-public interface IConsumerCallback extends Runnable{
+public interface IConsumerCallback {
     void run(Message message);
 }
